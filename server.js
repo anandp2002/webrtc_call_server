@@ -114,6 +114,24 @@ io.on('connection', (socket) => {
         }
     });
 
+    // Media state changes: Video toggle
+    socket.on('video-toggle', ({ roomId, isVideoEnabled }) => {
+        const otherParticipant = roomManager.getOtherParticipant(roomId, socket.id);
+        if (otherParticipant) {
+            io.to(otherParticipant).emit('peer-video-toggle', { isVideoEnabled });
+            console.log(`📹 Video ${isVideoEnabled ? 'enabled' : 'disabled'} by ${socket.id}`);
+        }
+    });
+
+    // Media state changes: Audio toggle
+    socket.on('audio-toggle', ({ roomId, isAudioEnabled }) => {
+        const otherParticipant = roomManager.getOtherParticipant(roomId, socket.id);
+        if (otherParticipant) {
+            io.to(otherParticipant).emit('peer-audio-toggle', { isAudioEnabled });
+            console.log(`🎤 Audio ${isAudioEnabled ? 'enabled' : 'disabled'} by ${socket.id}`);
+        }
+    });
+
     // Leave room
     socket.on('leave-room', ({ roomId }) => {
         handleLeaveRoom(socket, roomId);
